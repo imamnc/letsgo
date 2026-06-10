@@ -3,28 +3,25 @@ package health
 import (
 	"context"
 
-	dbsql "letsgo/internal/database/sqlc"
+	"letsgo/internal/app"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Repository struct {
-	db      *pgxpool.Pool
-	queries *dbsql.Queries
+	app *app.Application
 }
 
-func NewRepository(db *pgxpool.Pool, queries *dbsql.Queries) *Repository {
+func NewRepository(application *app.Application) *Repository {
 	return &Repository{
-		db:      db,
-		queries: queries,
+		app: application,
 	}
 }
 
 func (r *Repository) CheckDatabase(ctx *fiber.Ctx) error {
-	return r.db.Ping(ctx.Context())
+	return r.app.DB.Ping(ctx.Context())
 }
 
 func (r *Repository) CountUsers(ctx context.Context) (int64, error) {
-	return r.queries.CountUsers(ctx)
+	return r.app.Queries.CountUsers(ctx)
 }

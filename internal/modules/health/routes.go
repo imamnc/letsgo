@@ -8,7 +8,7 @@ import (
 
 func Register(application *app.Application, router fiber.Router) {
 	// Intialize the repository
-	repository := NewRepository(application.DB, application.Queries)
+	repository := NewRepository(application)
 	// Initialize the service with the repository
 	service := NewService(repository)
 	// Initialize the handler with the application context

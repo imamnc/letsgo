@@ -18,3 +18,7 @@ func (s *Service) Check(ctx *fiber.Ctx) bool {
 	}
 	return true
 }
+
+func (s *Service) GetUserCount(ctx *fiber.Ctx) (int64, error) {
+	return s.repository.CountUsers(ctx.Context())
+}

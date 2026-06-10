@@ -27,11 +27,20 @@ func (h *Handler) Check(
 			"status": "DOWN",
 		})
 	}
+
+	count, err := h.service.GetUserCount(c)
+	if err != nil {
+		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{
+			"status": "DOWN",
+		})
+	}
+
 	return c.JSON(fiber.Map{
 		"project":      "LetsGO",
 		"project_desc": "API Boilerplate built with Go, and Fiber. Just clone and LetsGO!",
 		"version":      "1.0.0",
 		"status":       "UP",
+		"user_count":   count,
 	})
 
 }

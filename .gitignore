@@ -1,0 +1,36 @@
+# Go build artifacts
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# Generated files
+*.log
+
+# Environment
+.env
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*~
+
+# MacOS
+.DS_Store
+
+# Linux
+*~
+
+# Air hot reload temp
+tmp/

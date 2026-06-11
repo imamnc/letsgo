@@ -2,6 +2,7 @@ package routes
 
 import (
 	"letsgo/internal/app"
+	"letsgo/internal/modules/auth"
 	"letsgo/internal/modules/health"
 )
 
@@ -13,4 +14,6 @@ func Register(application *app.Application) {
 
 	// Register health routes
 	health.Register(application, v1)
+	// Register auth routes
+	auth.Register(application, v1)
 }

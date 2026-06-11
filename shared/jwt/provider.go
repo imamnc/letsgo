@@ -4,6 +4,7 @@ import (
 	"time"
 
 	gjwt "github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type Provider struct {
@@ -29,6 +30,15 @@ func (p *Provider) Encode(
 	email string,
 	role string,
 ) (string, error) {
+	return p.EncodeWithExpiry(userID, email, role, p.expire)
+}
+
+func (p *Provider) EncodeWithExpiry(
+	userID int64,
+	email string,
+	role string,
+	expire time.Duration,
+) (string, error) {
 
 	now := time.Now()
 
@@ -37,10 +47,11 @@ func (p *Provider) Encode(
 		Email:  email,
 		Role:   role,
 		RegisteredClaims: gjwt.RegisteredClaims{
+			ID:       uuid.NewString(),
 			Issuer:   p.issuer,
 			IssuedAt: gjwt.NewNumericDate(now),
 			ExpiresAt: gjwt.NewNumericDate(
-				now.Add(p.expire),
+				now.Add(expire),
 			),
 		},
 	}

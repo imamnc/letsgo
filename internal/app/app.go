@@ -4,6 +4,7 @@ import (
 	dbsql "letsgo/db/sqlc"
 	"letsgo/internal/config"
 	"letsgo/internal/database"
+	"letsgo/shared/jwt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -16,6 +17,7 @@ type Application struct {
 	Config  config.Config
 	DB      *pgxpool.Pool
 	Queries *dbsql.Queries
+	Jwt     *jwt.Provider
 }
 
 func New() *Application {
@@ -24,13 +26,19 @@ func New() *Application {
 
 	// Load configuration
 	cfg := config.Load()
+
 	// Connect to the database
 	db := database.Connect(cfg)
+
 	// Initialize SQLC queries using database/sql compatibility layer
 	sqlDB := stdlib.OpenDBFromPool(db)
 	queries := dbsql.New(sqlDB)
+
 	// Initialize Fiber app
 	fiberApp := fiber.New()
+
+	// Init jwt provider
+	jwtProvider := jwt.New(cfg.JWTSecret, cfg.JWTIssuer, cfg.JWTExpiry)
 
 	// Create the application instance
 	app := &Application{
@@ -38,6 +46,7 @@ func New() *Application {
 		Config:  cfg,
 		DB:      db,
 		Queries: queries,
+		Jwt:     jwtProvider,
 	}
 	// Return the application instance
 	return app

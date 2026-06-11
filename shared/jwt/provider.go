@@ -25,6 +25,7 @@ func New(
 	}
 }
 
+// Encode creates a JWT token with the given user information and default expiration time.
 func (p *Provider) Encode(
 	userID int64,
 	email string,
@@ -33,6 +34,7 @@ func (p *Provider) Encode(
 	return p.EncodeWithExpiry(userID, email, role, p.expire)
 }
 
+// EncodeWithExpiry creates a JWT token with the given user information and custom expiration time.
 func (p *Provider) EncodeWithExpiry(
 	userID int64,
 	email string,
@@ -66,6 +68,7 @@ func (p *Provider) EncodeWithExpiry(
 	)
 }
 
+// Decode parses and validates the given JWT token string and returns the claims if valid.
 func (p *Provider) Decode(
 	tokenString string,
 ) (*Claims, error) {
@@ -91,6 +94,7 @@ func (p *Provider) Decode(
 	return claims, nil
 }
 
+// Validate checks if the given JWT token string is valid and not expired.
 func (p *Provider) Validate(
 	tokenString string,
 ) error {

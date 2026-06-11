@@ -1,9 +1,9 @@
 package app
 
 import (
+	dbsql "letsgo/db/sqlc"
 	"letsgo/internal/config"
 	"letsgo/internal/database"
-	dbsql "letsgo/internal/database/sqlc"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"

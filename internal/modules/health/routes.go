@@ -8,13 +8,8 @@ import (
 
 func Register(application *app.Application, router fiber.Router) {
 	// Intialize the repository
-	repository := NewRepository(application)
-	// Initialize the service with the repository
-	service := NewService(repository)
-	// Initialize the handler with the application context
-	handler := NewHandler(service)
+	module := NewModule(application)
 
 	// Health check route
-	router.Get("/health", handler.Check)
-
+	router.Get("/health", module.handler.Check)
 }

@@ -2,42 +2,57 @@ BINARY := ./bin/letsgo
 CMD := ./cmd/api
 # Migration name for creating new migrations
 NAME ?= create_users
-# Default user details for seeding
-USER_NAME ?= admin
-USER_EMAIL ?= admin@example.com
-USER_PASSWORD ?= password
 
-.PHONY: up dev build sqlc migration migrate migrate-down user
+ESC := \033
+BOLD := $(ESC)[1m
+CYAN := $(ESC)[36m
+GREEN := $(ESC)[32m
+YELLOW := $(ESC)[33m
+MAGENTA := $(ESC)[35m
+RESET := $(ESC)[0m
+
+.PHONY: up dev build sqlc migration migrate migrate-down migrate-fresh seed
 
 up: dev
 
 dev:
-	@echo "Starting development server with hot reload..."
+	@printf "$(CYAN)$(BOLD)╔══════════════════════════════════════════════╗$(RESET)\n"
+	@printf "$(CYAN)$(BOLD)║                  LetsGO                      ║$(RESET)\n"
+	@printf "$(CYAN)$(BOLD)║           Just clone and LetsGo              ║$(RESET)\n"
+	@printf "$(CYAN)$(BOLD)╚══════════════════════════════════════════════╝$(RESET)\n"
+	@printf "$(CYAN)$(BOLD)🚀 Starting development server with hot reload...$(RESET)\n"
 	air -c .air.toml
 
 build:
+	@printf "$(GREEN)📦 Building binary $(BINARY)...$(RESET)\n"
 	@mkdir -p $(dir $(BINARY))
 	go build -o $(BINARY) $(CMD)
 
 migration:
-	@echo "Creating migration $(NAME)..."
-	migrate create -ext sql -dir migrations $(NAME)
+	@printf "$(MAGENTA)🧱 Creating migration $(NAME)...$(RESET)\n"
+	migrate create -ext sql -dir db/migrations $(NAME)
 
 migrate:
-	@echo "Running database migrations..."
+	@printf "$(GREEN)⬆️  Running database migrations...$(RESET)\n"
 	@set -a; . ./.env 2>/dev/null || true; set +a; \
-	migrate -path migrations -database "postgres://$$DB_USERNAME:$$DB_PASSWORD@$$DB_HOST:$$DB_PORT/$$DB_DATABASE?sslmode=$$DB_SSLMODE" up
+	migrate -path db/migrations -database "postgres://$$DB_USERNAME:$$DB_PASSWORD@$$DB_HOST:$$DB_PORT/$$DB_DATABASE?sslmode=$$DB_SSLMODE" up
 
 migrate-down:
-	@echo "Reverting database migrations..."
+	@printf "$(YELLOW)⬇️  Reverting database migrations...$(RESET)\n"
 	@set -a; . ./.env 2>/dev/null || true; set +a; \
-	migrate -path migrations -database "postgres://$$DB_USERNAME:$$DB_PASSWORD@$$DB_HOST:$$DB_PORT/$$DB_DATABASE?sslmode=$$DB_SSLMODE" down
+	migrate -path db/migrations -database "postgres://$$DB_USERNAME:$$DB_PASSWORD@$$DB_HOST:$$DB_PORT/$$DB_DATABASE?sslmode=$$DB_SSLMODE" down
 
-user:
-	@echo "Seeding user $(USER_EMAIL)..."
+migrate-fresh:
+	@printf "$(YELLOW)♻️  Resetting database and running migrations...$(RESET)\n"
 	@set -a; . ./.env 2>/dev/null || true; set +a; \
-	USER_NAME="$(USER_NAME)" USER_EMAIL="$(USER_EMAIL)" USER_PASSWORD="$(USER_PASSWORD)" go run ./cmd/seed
+	migrate -path db/migrations -database "postgres://$$DB_USERNAME:$$DB_PASSWORD@$$DB_HOST:$$DB_PORT/$$DB_DATABASE?sslmode=$$DB_SSLMODE" drop -f && \
+	migrate -path db/migrations -database "postgres://$$DB_USERNAME:$$DB_PASSWORD@$$DB_HOST:$$DB_PORT/$$DB_DATABASE?sslmode=$$DB_SSLMODE" up
+
+seed:
+	@printf "$(GREEN)🌱 Seeding database...$(RESET)\n"
+	@set -a; . ./.env 2>/dev/null || true; set +a; \
+	go run ./cmd/seed
 
 sqlc:
-	@echo "Generating sqlc code..."
+	@printf "$(CYAN)🛠️ Generating sqlc code...$(RESET)\n"
 	sqlc generate

@@ -3,6 +3,7 @@ CMD := ./cmd/api
 # Migration name for creating new migrations
 NAME ?= create_users
 
+# ANSI escape codes for colored output
 ESC := \033
 BOLD := $(ESC)[1m
 CYAN := $(ESC)[36m
@@ -11,9 +12,12 @@ YELLOW := $(ESC)[33m
 MAGENTA := $(ESC)[35m
 RESET := $(ESC)[0m
 
-.PHONY: up dev build sqlc migration migrate migrate-down migrate-fresh seed
+# Define phony targets to prevent conflicts with files of the same name
+.PHONY: dev build sqlc migration migrate migrate-down migrate-fresh seed
 
-up: dev
+# =============================================================
+# Default target when running `make` without arguments
+# =============================================================
 
 dev:
 	@printf "$(CYAN)$(BOLD)╔══════════════════════════════════════════════╗$(RESET)\n"

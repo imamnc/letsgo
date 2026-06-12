@@ -1,9 +1,9 @@
 package app
 
 import (
+	database "letsgo/db"
 	dbsql "letsgo/db/sqlc"
 	"letsgo/internal/config"
-	"letsgo/internal/database"
 	"letsgo/shared/jwt"
 
 	"github.com/gofiber/fiber/v2"

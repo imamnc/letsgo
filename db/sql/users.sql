@@ -22,3 +22,16 @@ OFFSET $2;
 
 -- name: CountUsers :one
 SELECT COUNT(*) FROM users;
+
+-- name: UpdateUser :one
+UPDATE users
+SET name = $2,
+    email = $3,
+    password = $4,
+    updated_at = now()
+WHERE id = $1
+RETURNING id, name, email, password, created_at, updated_at;
+
+-- name: DeleteUser :exec
+DELETE FROM users
+WHERE id = $1;

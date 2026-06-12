@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 	"net/url"
-	"os"
-	"strconv"
 	"time"
+
+	"letsgo/shared/env"
 )
 
 type Config struct {
@@ -26,20 +26,22 @@ type Config struct {
 }
 
 func Load() Config {
+	_ = env.Load()
+
 	cfg := Config{
 		// Application configuration
-		Port: getEnv("PORT", "3000"),
+		Port: env.Get("PORT", "3000"),
 		// Database configuration
-		DBHost:     getEnv("DB_HOST", "127.0.0.1"),
-		DBPort:     getEnv("DB_PORT", "5432"),
-		DBUser:     getEnv("DB_USERNAME", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "password"),
-		DBName:     getEnv("DB_DATABASE", "letsgo"),
-		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
+		DBHost:     env.Get("DB_HOST", "127.0.0.1"),
+		DBPort:     env.Get("DB_PORT", "5432"),
+		DBUser:     env.Get("DB_USERNAME", "postgres"),
+		DBPassword: env.Get("DB_PASSWORD", "password"),
+		DBName:     env.Get("DB_DATABASE", "letsgo"),
+		DBSSLMode:  env.Get("DB_SSLMODE", "disable"),
 		// JWT configuration
-		JWTSecret: getEnv("JWT_SECRET", "secret"),
-		JWTIssuer: getEnv("JWT_ISSUER", "letsgo"),
-		JWTExpiry: time.Duration(getEnvInt64("JWT_EXPIRY", 3600)) * time.Second,
+		JWTSecret: env.Get("JWT_SECRET", "secret"),
+		JWTIssuer: env.Get("JWT_ISSUER", "letsgo"),
+		JWTExpiry: time.Duration(env.GetInt64("JWT_EXPIRY", 3600)) * time.Second,
 	}
 	cfg.DatabaseURL = buildDatabaseURL(cfg)
 	return cfg
@@ -58,20 +60,4 @@ func buildDatabaseURL(cfg Config) string {
 	u.RawQuery = q.Encode()
 
 	return u.String()
-}
-
-func getEnv(key, fallback string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return fallback
-}
-
-func getEnvInt64(key string, fallback int64) int64 {
-	if value := os.Getenv(key); value != "" {
-		if v, err := strconv.ParseInt(value, 10, 64); err == nil {
-			return v
-		}
-	}
-	return fallback
 }

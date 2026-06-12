@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
 )
 
 type Application struct {
@@ -21,9 +20,6 @@ type Application struct {
 }
 
 func New() *Application {
-	// Load environment variables from .env if present
-	_ = godotenv.Load()
-
 	// Load configuration
 	cfg := config.Load()
 

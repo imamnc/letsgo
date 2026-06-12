@@ -1,6 +1,8 @@
 package health
 
 import (
+	response "letsgo/shared/response"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -23,21 +25,17 @@ func (h *Handler) Check(
 	c *fiber.Ctx,
 ) error {
 	if !h.service.Check(c) {
-		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{
-			"status": "DOWN",
-		})
+		return response.InternalServerError(c, "service unavailable")
 	}
 
 	count, err := h.service.GetUserCount(c)
 	if err != nil {
-		return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{
-			"status": "DOWN",
-		})
+		return response.InternalServerError(c, "service unavailable")
 	}
 
-	return c.JSON(fiber.Map{
+	return response.Success(c, "Service is up", map[string]any{
 		"project":      "LetsGO",
-		"project_desc": "API Boilerplate built with Go, and Fiber. Just clone and LetsGO!",
+		"project_desc": "API Boilerplate built with Go and Fiber. Just clone and LetsGO!",
 		"version":      "1.0.0",
 		"status":       "UP",
 		"user_count":   count,

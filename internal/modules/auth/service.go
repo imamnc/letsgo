@@ -66,6 +66,10 @@ func (s *Service) FetchUser(ctx context.Context, tokenString string) (dbsql.User
 	return s.repository.FindUserByID(ctx, claims.UserID)
 }
 
+func (s *Service) FindUserByID(ctx context.Context, id int64) (dbsql.User, error) {
+	return s.repository.FindUserByID(ctx, id)
+}
+
 func (s *Service) issuePair(user dbsql.User) (dbsql.User, string, string, error) {
 	accessToken, err := s.jwt.Encode(int64(user.ID), user.Email, defaultUserRole)
 	if err != nil {

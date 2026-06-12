@@ -7,6 +7,7 @@ import (
 	"time"
 
 	dbsql "letsgo/db/sqlc"
+	response "letsgo/shared/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,6 +17,7 @@ type Handler struct {
 }
 
 type ErrorResponse struct {
+	Success bool   `json:"success" example:"false"`
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
@@ -57,14 +59,17 @@ func NewHandler(service *Service) *Handler {
 // ListUsers godoc
 // @Summary List users
 // @Description Get a paginated list of users
-// @Tags users
+// @Tags Users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param limit query int false "Maximum results"
 // @Param offset query int false "Result offset"
 // @Success 200 {object} ListUsersResponse
 // @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
+// @Security ApiKeyAuth
 // @Router /users/ [get]
 func (h *Handler) List(c *fiber.Ctx) error {
 	limit := int32(20)
@@ -73,7 +78,7 @@ func (h *Handler) List(c *fiber.Ctx) error {
 	if q := c.Query("limit"); q != "" {
 		parsed, err := strconv.Atoi(q)
 		if err != nil || parsed < 1 {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "limit must be a positive integer"})
+			return response.BadRequest(c, "limit must be a positive integer")
 		}
 		if parsed > 100 {
 			parsed = 100
@@ -84,23 +89,23 @@ func (h *Handler) List(c *fiber.Ctx) error {
 	if q := c.Query("offset"); q != "" {
 		parsed, err := strconv.Atoi(q)
 		if err != nil || parsed < 0 {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "offset must be a non-negative integer"})
+			return response.BadRequest(c, "offset must be a non-negative integer")
 		}
 		offset = int32(parsed)
 	}
 
 	users, err := h.service.ListUsers(c.Context(), limit, offset)
 	if err != nil {
-		return h.respondError(c, err)
+		return h.Error(c, err)
 	}
 
-	response := make([]UserResponse, len(users))
+	responseData := make([]UserResponse, len(users))
 	for i, user := range users {
-		response[i] = toUserResponse(user)
+		responseData[i] = User(user)
 	}
 
-	return c.JSON(ListUsersResponse{
-		Users:  response,
+	return response.Success(c, "Users fetched successfully", ListUsersResponse{
+		Users:  responseData,
 		Limit:  limit,
 		Offset: offset,
 	})
@@ -109,19 +114,22 @@ func (h *Handler) List(c *fiber.Ctx) error {
 // CreateUser godoc
 // @Summary Create a new user
 // @Description Create a new user with name, email, and password
-// @Tags users
+// @Tags Users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param request body CreateUserRequest true "Create user request"
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
 // @Failure 409 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
+// @Security ApiKeyAuth
 // @Router /users/ [post]
 func (h *Handler) Create(c *fiber.Ctx) error {
 	var request CreateUserRequest
 	if err := c.BodyParser(&request); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "invalid request body"})
+		return response.BadRequest(c, "invalid request body")
 	}
 
 	request.Name = strings.TrimSpace(request.Name)
@@ -129,119 +137,128 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 	request.Password = strings.TrimSpace(request.Password)
 
 	if request.Name == "" || request.Email == "" || request.Password == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "name, email, and password are required"})
+		return response.BadRequest(c, "name, email, and password are required")
 	}
 
 	user, err := h.service.CreateUser(c.Context(), request)
 	if err != nil {
-		return h.respondError(c, err)
+		return h.Error(c, err)
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(toUserResponse(user))
+	return response.Created(c, "User created successfully", User(user))
 }
 
 // GetUser godoc
 // @Summary Get user details
 // @Description Get a user by ID
-// @Tags users
+// @Tags Users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Success 200 {object} UserResponse
 // @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
+// @Security ApiKeyAuth
 // @Router /users/{id} [get]
 func (h *Handler) Get(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "invalid user id"})
+		return response.BadRequest(c, "invalid user id")
 	}
 
 	user, err := h.service.FindUserByID(c.Context(), int32(id))
 	if err != nil {
-		return h.respondError(c, err)
+		return h.Error(c, err)
 	}
 
-	return c.JSON(toUserResponse(user))
+	return response.Success(c, "User fetched successfully", User(user))
 }
 
 // UpdateUser godoc
 // @Summary Update a user
 // @Description Update user fields by ID
-// @Tags users
+// @Tags Users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Param request body UpdateUserRequest true "Update user request"
 // @Success 200 {object} UserResponse
 // @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 409 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
+// @Security ApiKeyAuth
 // @Router /users/{id} [put]
 func (h *Handler) Update(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "invalid user id"})
+		return response.BadRequest(c, "invalid user id")
 	}
 
 	var request UpdateUserRequest
 	if err := c.BodyParser(&request); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "invalid request body"})
+		return response.BadRequest(c, "invalid request body")
 	}
 
 	if request.Name == nil && request.Email == nil && request.Password == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "at least one field is required to update"})
+		return response.BadRequest(c, "at least one field is required to update")
 	}
 
 	user, err := h.service.UpdateUser(c.Context(), int32(id), request)
 	if err != nil {
-		return h.respondError(c, err)
+		return h.Error(c, err)
 	}
 
-	return c.JSON(toUserResponse(user))
+	return response.Success(c, "User updated successfully", User(user))
 }
 
 // DeleteUser godoc
 // @Summary Delete a user
 // @Description Delete a user by ID
-// @Tags users
+// @Tags Users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Success 204 {string} string
 // @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
+// @Security ApiKeyAuth
 // @Router /users/{id} [delete]
 func (h *Handler) Delete(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": "invalid user id"})
+		return response.BadRequest(c, "invalid user id")
 	}
 
 	if err := h.service.DeleteUser(c.Context(), int32(id)); err != nil {
-		return h.respondError(c, err)
+		return h.Error(c, err)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	return response.NoContent(c)
 }
 
-func (h *Handler) respondError(c *fiber.Ctx, err error) error {
+func (h *Handler) Error(c *fiber.Ctx, err error) error {
 	switch {
 	case errors.Is(err, ErrUserNotFound):
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "NOT_FOUND", "message": err.Error()})
+		return response.NotFound(c, err.Error())
 	case errors.Is(err, ErrEmailAlreadyUsed):
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"status": "CONFLICT", "message": err.Error()})
+		return response.Conflict(c, err.Error())
 	case strings.Contains(err.Error(), "cannot be empty"):
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "BAD_REQUEST", "message": err.Error()})
+		return response.BadRequest(c, err.Error())
 	default:
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "ERROR", "message": "something went wrong"})
+		return response.InternalServerError(c, "something went wrong")
 	}
 }
 
-func toUserResponse(user dbsql.User) UserResponse {
+func User(user dbsql.User) UserResponse {
 	return UserResponse{
 		ID:        user.ID,
 		Name:      user.Name,

@@ -50,5 +50,5 @@ func New() *Application {
 
 func (a *Application) Run() error {
 	// Start the Fiber app
-	return a.App.Listen(":" + a.Config.Port)
+	return a.App.Listen(":" + a.Config.AppPort)
 }

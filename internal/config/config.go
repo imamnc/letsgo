@@ -10,7 +10,8 @@ import (
 
 type Config struct {
 	// Application configuration
-	Port string
+	AppPort string
+	AppHost string
 	// Database configuration
 	DBHost      string
 	DBPort      string
@@ -30,7 +31,8 @@ func Load() Config {
 
 	cfg := Config{
 		// Application configuration
-		Port: env.Get("PORT", "3000"),
+		AppPort: env.Get("APP_PORT", "3000"),
+		AppHost: env.Get("APP_HOST", "localhost:3000"),
 		// Database configuration
 		DBHost:     env.Get("DB_HOST", "127.0.0.1"),
 		DBPort:     env.Get("DB_PORT", "5432"),

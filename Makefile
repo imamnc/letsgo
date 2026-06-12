@@ -13,7 +13,7 @@ MAGENTA := $(ESC)[35m
 RESET := $(ESC)[0m
 
 # Define phony targets to prevent conflicts with files of the same name
-.PHONY: dev build sqlc migration migrate migrate-down migrate-fresh seed
+.PHONY: dev build sqlc migration migrate migrate-down migrate-fresh seed docs
 
 # =============================================================
 # Default target when running `make` without arguments
@@ -60,3 +60,7 @@ seed:
 sqlc:
 	@printf "$(CYAN)🛠️ Generating sqlc code...$(RESET)\n"
 	sqlc generate
+
+docs:
+	@printf "$(CYAN)📚 Generating API documentation...$(RESET)\n"
+	swag init -g cmd/api/main.go -o docs

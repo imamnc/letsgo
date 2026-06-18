@@ -5,6 +5,7 @@ import (
 	dbsql "letsgo/db/sqlc"
 	"letsgo/internal/config"
 	"letsgo/shared/jwt"
+	"letsgo/shared/redis"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,6 +18,7 @@ type Application struct {
 	DB      *pgxpool.Pool
 	Queries *dbsql.Queries
 	Jwt     *jwt.Provider
+	Redis   *redis.Service
 }
 
 func New() *Application {
@@ -29,6 +31,9 @@ func New() *Application {
 	// Initialize SQLC queries using database/sql compatibility layer
 	sqlDB := stdlib.OpenDBFromPool(db)
 	queries := dbsql.New(sqlDB)
+
+	// Initialize Redis client
+	redisClient := redis.New(cfg.RedisHost+":"+cfg.RedisPort, "", 0)
 
 	// Initialize Fiber app
 	fiberApp := fiber.New()
@@ -43,7 +48,9 @@ func New() *Application {
 		DB:      db,
 		Queries: queries,
 		Jwt:     jwtProvider,
+		Redis:   redis.NewService(redisClient),
 	}
+
 	// Return the application instance
 	return app
 }

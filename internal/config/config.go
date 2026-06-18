@@ -20,6 +20,9 @@ type Config struct {
 	DBName      string
 	DBSSLMode   string
 	DatabaseURL string
+	// Redis configuration
+	RedisHost string
+	RedisPort string
 	// JWT configuration
 	JWTSecret string
 	JWTIssuer string
@@ -40,6 +43,9 @@ func Load() Config {
 		DBPassword: env.Get("DB_PASSWORD", "password"),
 		DBName:     env.Get("DB_DATABASE", "letsgo"),
 		DBSSLMode:  env.Get("DB_SSLMODE", "disable"),
+		// Redis configuration
+		RedisHost: env.Get("REDIS_HOST", "127.0.0.1"),
+		RedisPort: env.Get("REDIS_PORT", "6379"),
 		// JWT configuration
 		JWTSecret: env.Get("JWT_SECRET", "secret"),
 		JWTIssuer: env.Get("JWT_ISSUER", "letsgo"),

@@ -12,6 +12,9 @@ RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 # Install migrate tools for running database migrations
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
+# Install swaggo for generating swagger documentation
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
 # Create application directory
 RUN mkdir -p /app
 

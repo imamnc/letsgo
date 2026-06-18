@@ -14,7 +14,7 @@ func Auth(application *app.Application) fiber.Handler {
 		if authorization == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"status":  "UNAUTHORIZED",
-				"message": "authorization token is required",
+				"message": "Authorization token is required",
 			})
 		}
 
@@ -22,7 +22,7 @@ func Auth(application *app.Application) fiber.Handler {
 		if token == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"status":  "UNAUTHORIZED",
-				"message": "authorization token is required",
+				"message": "Authorization token is required",
 			})
 		}
 
@@ -30,7 +30,7 @@ func Auth(application *app.Application) fiber.Handler {
 		if err != nil {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"status":  "UNAUTHORIZED",
-				"message": "invalid authorization token",
+				"message": "Invalid authorization token",
 			})
 		}
 

@@ -8,7 +8,6 @@ func Success[T any](
 	data T,
 ) error {
 	return c.JSON(Response[T]{
-		Success: true,
 		Status:  "SUCCESS",
 		Message: message,
 		Data:    data,
@@ -21,7 +20,6 @@ func Created[T any](
 	data T,
 ) error {
 	return c.Status(fiber.StatusCreated).JSON(Response[T]{
-		Success: true,
 		Status:  "SUCCESS",
 		Message: message,
 		Data:    data,

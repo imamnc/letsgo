@@ -10,7 +10,6 @@ func Error(
 ) error {
 	return c.Status(code).JSON(
 		Response[any]{
-			Success: false,
 			Status:  status,
 			Message: message,
 		},

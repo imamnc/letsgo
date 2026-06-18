@@ -1,0 +1,32 @@
+services:
+
+  # Development Container
+  dev:
+    container_name: apps-letsgo
+    restart: unless-stopped
+    tty: true
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ../:/app
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # Production Container
+  prod:
+    container_name: letsgo-prod
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    environment:
+      - APP_ENV=production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

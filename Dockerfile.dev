@@ -1,0 +1,22 @@
+FROM golang:latest
+
+# Install some utils
+RUN apt-get update && apt-get install -y nano git curl make
+
+# Install air for hot reload in development
+RUN go install github.com/air-verse/air@latest
+
+# Install sqlc for database generation
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+# Install migrate tools for running database migrations
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+# Create application directory
+RUN mkdir -p /app
+
+# Expose Port
+WORKDIR /app
+
+# Copy project files
+COPY . .

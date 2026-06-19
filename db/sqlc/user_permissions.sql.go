@@ -43,6 +43,45 @@ func (q *Queries) DetachUserPermissions(ctx context.Context, arg DetachUserPermi
 	return err
 }
 
+const getUserPermissions = `-- name: GetUserPermissions :many
+SELECT p.id, p.name, p.code, p.description, p.parent_id, p.created_at, p.updated_at
+FROM permissions p
+JOIN user_permissions up ON p.id = up.permission_id
+WHERE up.user_id = $1
+ORDER BY p.id
+`
+
+func (q *Queries) GetUserPermissions(ctx context.Context, userID int32) ([]Permission, error) {
+	rows, err := q.db.QueryContext(ctx, getUserPermissions, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Permission
+	for rows.Next() {
+		var i Permission
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Code,
+			&i.Description,
+			&i.ParentID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const syncUserPermissions = `-- name: SyncUserPermissions :exec
 WITH desired AS (
   SELECT unnest($2::int[]) AS permission_id

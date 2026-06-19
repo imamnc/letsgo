@@ -156,3 +156,11 @@ func (s *Service) SyncPermissions(ctx context.Context, userID int32, permissionI
 
 	return s.repository.SyncPermissions(ctx, userID, permissionIDs)
 }
+
+func (s *Service) GetUserPermissions(ctx context.Context, userID int32) ([]dbsql.Permission, error) {
+	if _, err := s.repository.FindUserByID(ctx, userID); err != nil {
+		return nil, err
+	}
+
+	return s.repository.GetUserPermissions(ctx, userID)
+}

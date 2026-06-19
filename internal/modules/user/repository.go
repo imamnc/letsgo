@@ -77,6 +77,10 @@ func (r *Repository) SyncPermissions(ctx context.Context, userID int32, permissi
 	})
 }
 
+func (r *Repository) GetUserPermissions(ctx context.Context, userID int32) ([]dbsql.Permission, error) {
+	return r.app.Queries.GetUserPermissions(ctx, userID)
+}
+
 func translateUserError(err error) error {
 	if err == nil {
 		return nil

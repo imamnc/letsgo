@@ -1,6 +1,7 @@
 package user
 
 import (
+	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
@@ -49,6 +50,20 @@ type ListUsersResponse struct {
 	Users  []UserResponse `json:"users"`
 	Limit  int32          `json:"limit"`
 	Offset int32          `json:"offset"`
+}
+
+type PermissionResponse struct {
+	ID          int32     `json:"id"`
+	Name        string    `json:"name"`
+	Code        string    `json:"code"`
+	Description *string   `json:"description,omitempty"`
+	ParentID    *int32    `json:"parent_id,omitempty"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type ListUserPermissionsResponse struct {
+	Permissions []PermissionResponse `json:"permissions"`
 }
 
 type PermissionActionResponse struct {
@@ -353,6 +368,63 @@ func (h *Handler) SyncPermissions(c *fiber.Ctx) error {
 	}
 
 	return response.Success[any](c, "Permissions synced successfully", nil)
+}
+
+// GetUserPermissions godoc
+// @Summary Get permissions assigned to a user
+// @Description Get all permissions assigned to a user
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} ListUserPermissionsResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /users/{id}/permissions [get]
+func (h *Handler) GetUserPermissions(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
+	if err != nil {
+		return response.BadRequest(c, "invalid user id")
+	}
+
+	permissions, err := h.service.GetUserPermissions(c.Context(), int32(id))
+	if err != nil {
+		return h.Error(c, err)
+	}
+
+	responseData := make([]PermissionResponse, len(permissions))
+	for i, perm := range permissions {
+		responseData[i] = PermissionResponse{
+			ID:          perm.ID,
+			Name:        perm.Name,
+			Code:        perm.Code,
+			Description: fromNullString(perm.Description),
+			ParentID:    fromNullInt32(perm.ParentID),
+			CreatedAt:   perm.CreatedAt,
+			UpdatedAt:   perm.UpdatedAt,
+		}
+	}
+
+	return response.Success(c, "User permissions fetched successfully", ListUserPermissionsResponse{
+		Permissions: responseData,
+	})
+}
+
+func fromNullString(ns sql.NullString) *string {
+	if !ns.Valid {
+		return nil
+	}
+	return &ns.String
+}
+
+func fromNullInt32(ni sql.NullInt32) *int32 {
+	if !ni.Valid {
+		return nil
+	}
+	return &ni.Int32
 }
 
 func (h *Handler) Error(c *fiber.Ctx, err error) error {

@@ -120,6 +120,13 @@ definitions:
       status:
         type: string
     type: object
+  user.ListUserPermissionsResponse:
+    properties:
+      permissions:
+        items:
+          $ref: '#/definitions/user.PermissionResponse'
+        type: array
+    type: object
   user.ListUsersResponse:
     properties:
       limit:
@@ -144,6 +151,23 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  user.PermissionResponse:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parent_id:
+        type: integer
+      updated_at:
+        type: string
     type: object
   user.UpdateUserRequest:
     properties:
@@ -715,6 +739,44 @@ paths:
       security:
       - BearerAuth: []
       summary: Detach permissions from a user
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Get all permissions assigned to a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ListUserPermissionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get permissions assigned to a user
       tags:
       - Users
     post:

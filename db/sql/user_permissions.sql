@@ -20,3 +20,10 @@ INSERT INTO user_permissions (user_id, permission_id)
 SELECT $1, permission_id
 FROM desired
 ON CONFLICT DO NOTHING;
+
+-- name: GetUserPermissions :many
+SELECT p.id, p.name, p.code, p.description, p.parent_id, p.created_at, p.updated_at
+FROM permissions p
+JOIN user_permissions up ON p.id = up.permission_id
+WHERE up.user_id = $1
+ORDER BY p.id;

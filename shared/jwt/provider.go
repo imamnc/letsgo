@@ -7,6 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	AccessTokenType  = "access"
+	RefreshTokenType = "refresh"
+)
+
 type Provider struct {
 	secret []byte
 	issuer string
@@ -25,29 +30,40 @@ func New(
 	}
 }
 
-// Encode creates a JWT token with the given user information and default expiration time.
+// Encode creates a JWT access token with the given user information and default expiration time.
 func (p *Provider) Encode(
 	userID int64,
 	email string,
 	role string,
 ) (string, error) {
-	return p.EncodeWithExpiry(userID, email, role, p.expire)
+	return p.encodeWithType(userID, email, role, p.expire, AccessTokenType)
 }
 
-// EncodeWithExpiry creates a JWT token with the given user information and custom expiration time.
-func (p *Provider) EncodeWithExpiry(
+// EncodeRefresh creates a JWT refresh token with the given user information and custom expiration time.
+func (p *Provider) EncodeRefresh(
 	userID int64,
 	email string,
 	role string,
 	expire time.Duration,
 ) (string, error) {
+	return p.encodeWithType(userID, email, role, expire, RefreshTokenType)
+}
+
+func (p *Provider) encodeWithType(
+	userID int64,
+	email string,
+	role string,
+	expire time.Duration,
+	tokenType string,
+) (string, error) {
 
 	now := time.Now()
 
 	claims := Claims{
-		UserID: userID,
-		Email:  email,
-		Role:   role,
+		UserID:    userID,
+		Email:     email,
+		Role:      role,
+		TokenType: tokenType,
 		RegisteredClaims: gjwt.RegisteredClaims{
 			ID:       uuid.NewString(),
 			Issuer:   p.issuer,

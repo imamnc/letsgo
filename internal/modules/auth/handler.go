@@ -102,12 +102,12 @@ func (h *Handler) AccessToken(c *fiber.Ctx) error {
 func (h *Handler) RefreshToken(c *fiber.Ctx) error {
 	var request RefreshTokenRequest
 	if err := c.BodyParser(&request); err != nil {
-		return response.BadRequest(c, "invalid request body")
+		return response.BadRequest(c, "Invalid request body")
 	}
 
 	tokenString := strings.TrimSpace(request.RefreshToken)
 	if tokenString == "" {
-		return response.BadRequest(c, "refresh_token is required")
+		return response.BadRequest(c, "Refresh token is required")
 	}
 
 	user, accessToken, refreshToken, err := h.service.Refresh(c.Context(), tokenString)

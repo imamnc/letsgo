@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"letsgo/internal/app"
+	sharedjwt "letsgo/shared/jwt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -28,6 +29,13 @@ func Auth(application *app.Application) fiber.Handler {
 
 		claims, err := application.Jwt.Decode(token)
 		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"status":  "UNAUTHORIZED",
+				"message": "Invalid authorization token",
+			})
+		}
+
+		if claims.TokenType != sharedjwt.AccessTokenType {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"status":  "UNAUTHORIZED",
 				"message": "Invalid authorization token",

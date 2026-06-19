@@ -49,6 +49,10 @@ func (s *Service) Refresh(ctx context.Context, tokenString string) (dbsql.User, 
 		return dbsql.User{}, "", "", err
 	}
 
+	if claims.TokenType != sharedjwt.RefreshTokenType {
+		return dbsql.User{}, "", "", ErrInvalidCredentials
+	}
+
 	user, err := s.repository.FindUserByID(ctx, claims.UserID)
 	if err != nil {
 		return dbsql.User{}, "", "", err
@@ -76,7 +80,7 @@ func (s *Service) issuePair(user dbsql.User) (dbsql.User, string, string, error)
 		return dbsql.User{}, "", "", err
 	}
 
-	refreshToken, err := s.jwt.EncodeWithExpiry(int64(user.ID), user.Email, defaultUserRole, refreshTokenDuration)
+	refreshToken, err := s.jwt.EncodeRefresh(int64(user.ID), user.Email, defaultUserRole, refreshTokenDuration)
 	if err != nil {
 		return dbsql.User{}, "", "", err
 	}

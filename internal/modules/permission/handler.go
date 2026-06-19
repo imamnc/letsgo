@@ -1,13 +1,13 @@
 package permission
 
 import (
-	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
 	"time"
 
 	dbsql "letsgo/db/sqlc"
+	"letsgo/shared/format"
 	response "letsgo/shared/response"
 
 	"github.com/gofiber/fiber/v2"
@@ -257,23 +257,9 @@ func Permission(permission dbsql.Permission) PermissionResponse {
 		ID:          permission.ID,
 		Name:        permission.Name,
 		Code:        permission.Code,
-		Description: fromNullString(permission.Description),
-		ParentID:    fromNullInt32(permission.ParentID),
+		Description: format.FromNullString(permission.Description),
+		ParentID:    format.FromNullInt32(permission.ParentID),
 		CreatedAt:   permission.CreatedAt,
 		UpdatedAt:   permission.UpdatedAt,
 	}
-}
-
-func fromNullString(value sql.NullString) *string {
-	if !value.Valid {
-		return nil
-	}
-	return &value.String
-}
-
-func fromNullInt32(value sql.NullInt32) *int32 {
-	if !value.Valid {
-		return nil
-	}
-	return &value.Int32
 }

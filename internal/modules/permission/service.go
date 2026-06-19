@@ -2,11 +2,11 @@ package permission
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"strings"
 
 	dbsql "letsgo/db/sqlc"
+	"letsgo/shared/format"
 )
 
 type Service struct {
@@ -21,8 +21,8 @@ func (s *Service) CreatePermission(ctx context.Context, request CreatePermission
 	return s.repository.CreatePermission(ctx, dbsql.CreatePermissionParams{
 		Name:        request.Name,
 		Code:        request.Code,
-		Description: toNullString(request.Description),
-		ParentID:    toNullInt32(request.ParentID),
+		Description: format.ToNullString(request.Description),
+		ParentID:    format.ToNullInt32(request.ParentID),
 	})
 }
 
@@ -60,12 +60,12 @@ func (s *Service) UpdatePermission(ctx context.Context, id int32, request Update
 
 	description := permission.Description
 	if request.Description != nil {
-		description = toNullString(request.Description)
+		description = format.ToNullString(request.Description)
 	}
 
 	parentID := permission.ParentID
 	if request.ParentID != nil {
-		parentID = toNullInt32(request.ParentID)
+		parentID = format.ToNullInt32(request.ParentID)
 	}
 
 	return s.repository.UpdatePermission(ctx, dbsql.UpdatePermissionParams{
@@ -79,18 +79,4 @@ func (s *Service) UpdatePermission(ctx context.Context, id int32, request Update
 
 func (s *Service) DeletePermission(ctx context.Context, id int32) error {
 	return s.repository.DeletePermission(ctx, id)
-}
-
-func toNullString(value *string) sql.NullString {
-	if value == nil {
-		return sql.NullString{}
-	}
-	return sql.NullString{String: *value, Valid: true}
-}
-
-func toNullInt32(value *int32) sql.NullInt32 {
-	if value == nil {
-		return sql.NullInt32{}
-	}
-	return sql.NullInt32{Int32: *value, Valid: true}
 }

@@ -2,11 +2,11 @@ package seeds
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strings"
 
 	dbsql "letsgo/db/sqlc"
+	"letsgo/shared/format"
 )
 
 type SeedPermissionParams struct {
@@ -49,8 +49,8 @@ func SeedPermission(ctx context.Context, queries *dbsql.Queries) error {
 		_, err := queries.CreatePermission(ctx, dbsql.CreatePermissionParams{
 			Name:        permission.Name,
 			Code:        permission.Code,
-			Description: toNullString(permission.Description),
-			ParentID:    toNullInt32(permission.ParentID),
+			Description: format.ToNullString(permission.Description),
+			ParentID:    format.ToNullInt32(permission.ParentID),
 		})
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
@@ -63,18 +63,4 @@ func SeedPermission(ctx context.Context, queries *dbsql.Queries) error {
 	}
 
 	return nil
-}
-
-func toNullString(value *string) sql.NullString {
-	if value == nil {
-		return sql.NullString{}
-	}
-	return sql.NullString{String: *value, Valid: true}
-}
-
-func toNullInt32(value *int32) sql.NullInt32 {
-	if value == nil {
-		return sql.NullInt32{}
-	}
-	return sql.NullInt32{Int32: *value, Valid: true}
 }

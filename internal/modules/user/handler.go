@@ -1,13 +1,13 @@
 package user
 
 import (
-	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
 	"time"
 
 	dbsql "letsgo/db/sqlc"
+	"letsgo/shared/format"
 	response "letsgo/shared/response"
 
 	"github.com/gofiber/fiber/v2"
@@ -401,8 +401,8 @@ func (h *Handler) GetUserPermissions(c *fiber.Ctx) error {
 			ID:          perm.ID,
 			Name:        perm.Name,
 			Code:        perm.Code,
-			Description: fromNullString(perm.Description),
-			ParentID:    fromNullInt32(perm.ParentID),
+			Description: format.FromNullString(perm.Description),
+			ParentID:    format.FromNullInt32(perm.ParentID),
 			CreatedAt:   perm.CreatedAt,
 			UpdatedAt:   perm.UpdatedAt,
 		}
@@ -411,20 +411,6 @@ func (h *Handler) GetUserPermissions(c *fiber.Ctx) error {
 	return response.Success(c, "User permissions fetched successfully", ListUserPermissionsResponse{
 		Permissions: responseData,
 	})
-}
-
-func fromNullString(ns sql.NullString) *string {
-	if !ns.Valid {
-		return nil
-	}
-	return &ns.String
-}
-
-func fromNullInt32(ni sql.NullInt32) *int32 {
-	if !ni.Valid {
-		return nil
-	}
-	return &ni.Int32
 }
 
 func (h *Handler) Error(c *fiber.Ctx, err error) error {

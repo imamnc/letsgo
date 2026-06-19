@@ -17,7 +17,6 @@ type Handler struct {
 }
 
 type ErrorResponse struct {
-	Success bool   `json:"success" example:"false"`
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
@@ -62,14 +61,13 @@ func NewHandler(service *Service) *Handler {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
 // @Param limit query int false "Maximum results"
 // @Param offset query int false "Result offset"
 // @Success 200 {object} ListUsersResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Router /users/ [get]
 func (h *Handler) List(c *fiber.Ctx) error {
 	limit := int32(20)
@@ -117,14 +115,13 @@ func (h *Handler) List(c *fiber.Ctx) error {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
 // @Param request body CreateUserRequest true "Create user request"
 // @Success 201 {object} UserResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 409 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Router /users/ [post]
 func (h *Handler) Create(c *fiber.Ctx) error {
 	var request CreateUserRequest
@@ -154,14 +151,13 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Success 200 {object} UserResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Router /users/{id} [get]
 func (h *Handler) Get(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
@@ -183,7 +179,6 @@ func (h *Handler) Get(c *fiber.Ctx) error {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Param request body UpdateUserRequest true "Update user request"
 // @Success 200 {object} UserResponse
@@ -192,7 +187,7 @@ func (h *Handler) Get(c *fiber.Ctx) error {
 // @Failure 404 {object} ErrorResponse
 // @Failure 409 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Router /users/{id} [put]
 func (h *Handler) Update(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
@@ -223,14 +218,13 @@ func (h *Handler) Update(c *fiber.Ctx) error {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Success 204 {string} string
 // @Failure 400 {object} ErrorResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Router /users/{id} [delete]
 func (h *Handler) Delete(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Params("id"), 10, 32)

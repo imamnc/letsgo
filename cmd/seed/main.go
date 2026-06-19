@@ -14,6 +14,11 @@ func main() {
 	// Get the SQLC queries from the application instance
 	queries := application.Queries
 
+	// Seed permission data
+	if err := seeds.SeedPermission(context.Background(), queries); err != nil {
+		log.Fatal(err)
+	}
+
 	// Seed the user data
 	if err := seeds.SeedUser(context.Background(), queries); err != nil {
 		log.Fatal(err)

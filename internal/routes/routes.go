@@ -5,6 +5,7 @@ import (
 	"letsgo/internal/app"
 	"letsgo/internal/modules/auth"
 	"letsgo/internal/modules/health"
+	"letsgo/internal/modules/permission"
 	"letsgo/internal/modules/user"
 
 	"github.com/gofiber/swagger"
@@ -27,6 +28,8 @@ func Register(application *app.Application) {
 	auth.Register(application, v1)
 	// Register user routes
 	user.Register(application, v1)
+	// Register permission routes
+	permission.Register(application, v1)
 }
 
 func SetupDocsInfo(application *app.Application) {

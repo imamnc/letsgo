@@ -17,7 +17,6 @@ type Handler struct {
 }
 
 type ErrorResponse struct {
-	Success bool   `json:"success" example:"false"`
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
@@ -129,12 +128,11 @@ func (h *Handler) RefreshToken(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} FetchUserResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Router /auth/user [get]
 func (h *Handler) FetchUser(c *fiber.Ctx) error {
 	claims, ok := c.Locals("user").(*sharedjwt.Claims)

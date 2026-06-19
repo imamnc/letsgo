@@ -51,6 +51,15 @@ type ListUsersResponse struct {
 	Offset int32          `json:"offset"`
 }
 
+type PermissionActionResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+type PermissionIDsRequest struct {
+	PermissionIDs []int32 `json:"permission_ids"`
+}
+
 func NewHandler(service *Service) *Handler {
 	return &Handler{service: service}
 }
@@ -237,6 +246,113 @@ func (h *Handler) Delete(c *fiber.Ctx) error {
 	}
 
 	return response.NoContent(c)
+}
+
+// AssignPermissions godoc
+// @Summary Assign permissions to a user
+// @Description Assign one or more permissions to a user
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body PermissionIDsRequest true "Permissions assignment request"
+// @Success 200 {object} PermissionActionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /users/{id}/permissions [post]
+func (h *Handler) AssignPermissions(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
+	if err != nil {
+		return response.BadRequest(c, "invalid user id")
+	}
+
+	var request PermissionIDsRequest
+	if err := c.BodyParser(&request); err != nil {
+		return response.BadRequest(c, "invalid request body")
+	}
+
+	if len(request.PermissionIDs) == 0 {
+		return response.BadRequest(c, "permission_ids are required")
+	}
+
+	if err := h.service.AssignPermissions(c.Context(), int32(id), request.PermissionIDs); err != nil {
+		return h.Error(c, err)
+	}
+
+	return response.Success[any](c, "Permissions assigned successfully", nil)
+}
+
+// DetachPermissions godoc
+// @Summary Detach permissions from a user
+// @Description Remove one or more permissions from a user
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body PermissionIDsRequest true "Permissions detachment request"
+// @Success 200 {object} PermissionActionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /users/{id}/permissions [delete]
+func (h *Handler) DetachPermissions(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
+	if err != nil {
+		return response.BadRequest(c, "invalid user id")
+	}
+
+	var request PermissionIDsRequest
+	if err := c.BodyParser(&request); err != nil {
+		return response.BadRequest(c, "invalid request body")
+	}
+
+	if len(request.PermissionIDs) == 0 {
+		return response.BadRequest(c, "permission_ids are required")
+	}
+
+	if err := h.service.DetachPermissions(c.Context(), int32(id), request.PermissionIDs); err != nil {
+		return h.Error(c, err)
+	}
+
+	return response.Success[any](c, "Permissions detached successfully", nil)
+}
+
+// SyncPermissions godoc
+// @Summary Sync a user's permissions
+// @Description Replace a user's permissions with the provided list
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body PermissionIDsRequest true "Permissions sync request"
+// @Success 200 {object} PermissionActionResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /users/{id}/permissions [put]
+func (h *Handler) SyncPermissions(c *fiber.Ctx) error {
+	id, err := strconv.ParseInt(c.Params("id"), 10, 32)
+	if err != nil {
+		return response.BadRequest(c, "invalid user id")
+	}
+
+	var request PermissionIDsRequest
+	if err := c.BodyParser(&request); err != nil {
+		return response.BadRequest(c, "invalid request body")
+	}
+
+	if err := h.service.SyncPermissions(c.Context(), int32(id), request.PermissionIDs); err != nil {
+		return h.Error(c, err)
+	}
+
+	return response.Success[any](c, "Permissions synced successfully", nil)
 }
 
 func (h *Handler) Error(c *fiber.Ctx, err error) error {

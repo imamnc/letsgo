@@ -56,6 +56,27 @@ func (r *Repository) DeleteUser(ctx context.Context, id int32) error {
 	return translateUserError(err)
 }
 
+func (r *Repository) AssignPermissions(ctx context.Context, userID int32, permissionIDs []int32) error {
+	return r.app.Queries.AssignUserPermissions(ctx, dbsql.AssignUserPermissionsParams{
+		UserID:  userID,
+		Column2: permissionIDs,
+	})
+}
+
+func (r *Repository) DetachPermissions(ctx context.Context, userID int32, permissionIDs []int32) error {
+	return r.app.Queries.DetachUserPermissions(ctx, dbsql.DetachUserPermissionsParams{
+		UserID:  userID,
+		Column2: permissionIDs,
+	})
+}
+
+func (r *Repository) SyncPermissions(ctx context.Context, userID int32, permissionIDs []int32) error {
+	return r.app.Queries.SyncUserPermissions(ctx, dbsql.SyncUserPermissionsParams{
+		UserID:  userID,
+		Column2: permissionIDs,
+	})
+}
+
 func translateUserError(err error) error {
 	if err == nil {
 		return nil

@@ -124,3 +124,35 @@ func (s *Service) DeleteUser(ctx context.Context, id int32) error {
 
 	return s.repository.app.Redis.Forget(ctx, cacheKeyForUserID(id))
 }
+
+func (s *Service) AssignPermissions(ctx context.Context, userID int32, permissionIDs []int32) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	if _, err := s.repository.FindUserByID(ctx, userID); err != nil {
+		return err
+	}
+
+	return s.repository.AssignPermissions(ctx, userID, permissionIDs)
+}
+
+func (s *Service) DetachPermissions(ctx context.Context, userID int32, permissionIDs []int32) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	if _, err := s.repository.FindUserByID(ctx, userID); err != nil {
+		return err
+	}
+
+	return s.repository.DetachPermissions(ctx, userID, permissionIDs)
+}
+
+func (s *Service) SyncPermissions(ctx context.Context, userID int32, permissionIDs []int32) error {
+	if _, err := s.repository.FindUserByID(ctx, userID); err != nil {
+		return err
+	}
+
+	return s.repository.SyncPermissions(ctx, userID, permissionIDs)
+}

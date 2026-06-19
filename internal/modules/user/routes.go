@@ -18,4 +18,7 @@ func Register(application *app.Application, router fiber.Router) {
 	users.Get("/:id", module.handler.Get)
 	users.Put("/:id", module.handler.Update)
 	users.Delete("/:id", module.handler.Delete)
+	users.Post("/:id/permissions", module.handler.AssignPermissions)
+	users.Delete("/:id/permissions", module.handler.DetachPermissions)
+	users.Put("/:id/permissions", module.handler.SyncPermissions)
 }

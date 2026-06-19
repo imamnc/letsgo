@@ -131,6 +131,20 @@ definitions:
           $ref: '#/definitions/user.UserResponse'
         type: array
     type: object
+  user.PermissionActionResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  user.PermissionIDsRequest:
+    properties:
+      permission_ids:
+        items:
+          type: integer
+        type: array
+    type: object
   user.UpdateUserRequest:
     properties:
       email:
@@ -656,6 +670,139 @@ paths:
       security:
       - BearerAuth: []
       summary: Update a user
+      tags:
+      - Users
+  /users/{id}/permissions:
+    delete:
+      consumes:
+      - application/json
+      description: Remove one or more permissions from a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Permissions detachment request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.PermissionIDsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.PermissionActionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Detach permissions from a user
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Assign one or more permissions to a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Permissions assignment request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.PermissionIDsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.PermissionActionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Assign permissions to a user
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Replace a user's permissions with the provided list
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Permissions sync request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.PermissionIDsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.PermissionActionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Sync a user's permissions
       tags:
       - Users
 securityDefinitions:

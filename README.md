@@ -62,7 +62,7 @@ Each feature module is organized around the same structure:
 
 The application is assembled in `cmd/api/main.go` by creating the app, registering routes, starting the scheduler, and then running the Fiber server.
 
-## Available Modules
+## Built-in Modules
 
 ### Health
 
@@ -163,19 +163,53 @@ make seed
 make dev
 ```
 
-## Common Commands
+## Makefile Commands and Usage
 
-The repository includes a `Makefile` with the following targets:
+The repository exposes the following `make` commands as the primary workflow for development and maintenance.
 
-- `make dev` starts the development server with hot reload.
-- `make build` compiles the production binary to `./bin/letsgo`.
-- `make migration NAME=my_migration` creates a new SQL migration pair.
-- `make migrate` applies pending migrations.
-- `make migrate-down` rolls back the last migration batch.
-- `make migrate-fresh` drops the database schema and re-applies migrations.
-- `make seed` runs the database seed entrypoint.
-- `make sqlc` regenerates SQLC output from the query files and migrations.
-- `make docs` regenerates Swagger documentation.
+- `make dev`
+  - Starts the development server with hot reload using the `.air.toml` configuration.
+  - Use this command during active development to see code changes without restarting the server manually.
+
+- `make build`
+  - Builds the production binary at `./bin/letsgo`.
+  - Use this when packaging or deploying the application.
+
+- `make migration NAME=my_migration`
+  - Generates a new migration file pair under `db/migrations`.
+  - Replace `my_migration` with a descriptive name such as `add_users_table`.
+
+- `make migrate`
+  - Applies pending database migrations using values from `.env`.
+  - Ensure `.env` is present and `DB_*` variables are configured before running.
+
+- `make migrate-down`
+  - Reverts the last migration batch.
+  - Use this to roll back changes during development or testing.
+
+- `make migrate-fresh`
+  - Drops the database schema and re-applies all migrations from scratch.
+  - Use cautiously; this resets database state.
+
+- `make seed`
+  - Runs the seed entrypoint at `cmd/seed` to insert sample data.
+  - Useful after migrations to populate required baseline records.
+
+- `make sqlc`
+  - Regenerates SQLC code from `db/sql` and migration schema.
+  - Run this whenever SQL query files or schema definitions change.
+
+- `make docs`
+  - Generates Swagger documentation from annotations in `cmd/api/main.go`.
+  - Use this to refresh the API docs served under `/api/docs/*`.
+
+### Usage Guidelines
+
+- Always create or refresh `.env` from `.env.example` before running environment-dependent commands.
+- Use `make dev` for local API development and `make build` for production packaging.
+- Apply migrations with `make migrate` before running the server, then seed data with `make seed` if needed.
+- For database schema changes, create a migration, then run `make migrate` and `make sqlc` if the query layer is affected.
+- If you need to reset local state, `make migrate-fresh` is the safest choice for development, but do not use it in production.
 
 ## API Documentation
 

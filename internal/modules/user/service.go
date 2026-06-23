@@ -25,14 +25,6 @@ func cacheKeyForUserID(id int32) string {
 	return fmt.Sprintf("user:%d", id)
 }
 
-func marshalUser(user dbsql.User) (string, error) {
-	return json.Marshal(user)
-}
-
-func unmarshalUser(data string) (dbsql.User, error) {
-	return json.Unmarshal[dbsql.User](data)
-}
-
 func (s *Service) CreateUser(ctx context.Context, request CreateUserRequest) (dbsql.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(strings.TrimSpace(request.Password)), bcrypt.DefaultCost)
 	if err != nil {
@@ -53,13 +45,13 @@ func (s *Service) FindUserByID(ctx context.Context, id int32) (dbsql.User, error
 		if err != nil {
 			return "", err
 		}
-		return marshalUser(user)
+		return json.Marshal(user)
 	})
 	if err != nil {
 		return dbsql.User{}, err
 	}
 
-	return unmarshalUser(cached)
+	return json.Unmarshal[dbsql.User](cached)
 }
 
 func (s *Service) ListUsers(ctx context.Context, limit, offset int32) ([]dbsql.User, error) {
@@ -113,6 +105,7 @@ func (s *Service) UpdateUser(ctx context.Context, id int32, request UpdateUserRe
 		return dbsql.User{}, err
 	}
 
+	// Forget the cached user data after update
 	return user, s.repository.app.Redis.Forget(ctx, cacheKeyForUserID(id))
 }
 
@@ -122,6 +115,7 @@ func (s *Service) DeleteUser(ctx context.Context, id int32) error {
 		return err
 	}
 
+	// Forget the cached user data after deletion
 	return s.repository.app.Redis.Forget(ctx, cacheKeyForUserID(id))
 }
 

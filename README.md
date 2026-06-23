@@ -4,7 +4,7 @@ LetsGO is a Go API boilerplate built with Fiber, PostgreSQL, Redis, SQLC, JWT au
 
 The project follows a module-based architecture under `internal/modules`, where each feature owns its own handler, service, repository, routes, and module wiring. Shared concerns such as configuration, JWT, Redis, response helpers, and middleware live in the `shared` and `internal` packages.
 
-## Highlights
+## Highlights ✨
 
 - Fiber-based HTTP API with versioned routing under `/api/v1`
 - SQLC-generated database access layer for strongly typed PostgreSQL queries
@@ -14,7 +14,7 @@ The project follows a module-based architecture under `internal/modules`, where 
 - Database migrations and seed commands ready for local development
 - Cron scheduler bootstrap for recurring jobs
 
-## Tech Stack
+## Tech Stack 🧰
 
 - Go 1.25.3
 - Fiber v2
@@ -24,7 +24,7 @@ The project follows a module-based architecture under `internal/modules`, where 
 - Swagger / Swaggo
 - `robfig/cron` for background jobs
 
-## Project Structure
+## Project Structure 📁
 
 ```text
 cmd/
@@ -50,7 +50,7 @@ shared/
 	format/      Formatting helpers
 ```
 
-## Architecture
+## Architecture 🏗️
 
 Each feature module is organized around the same structure:
 
@@ -62,7 +62,7 @@ Each feature module is organized around the same structure:
 
 The application is assembled in `cmd/api/main.go` by creating the app, registering routes, starting the scheduler, and then running the Fiber server.
 
-## Built-in Modules
+## Built-in Modules 🧩
 
 ### Health
 
@@ -104,7 +104,7 @@ Provides permission CRUD operations.
 - `PUT /api/v1/permissions/:id`
 - `DELETE /api/v1/permissions/:id`
 
-## Configuration
+## Configuration ⚙️
 
 Copy `.env.example` to `.env` and adjust the values for your local environment.
 
@@ -125,7 +125,7 @@ Copy `.env.example` to `.env` and adjust the values for your local environment.
 | `JWT_ISSUER` | JWT issuer value | `letsgo` |
 | `JWT_EXPIRY` | Access token expiry in seconds | `3600` |
 
-## Getting Started
+## Getting Started 🚀
 
 ### Prerequisites
 
@@ -163,7 +163,7 @@ make seed
 make dev
 ```
 
-## Makefile Commands and Usage
+## Makefile Commands and Usage 🛠️
 
 The repository exposes the following `make` commands as the primary workflow for development and maintenance.
 
@@ -211,7 +211,7 @@ The repository exposes the following `make` commands as the primary workflow for
 - For database schema changes, create a migration, then run `make migrate` and `make sqlc` if the query layer is affected.
 - If you need to reset local state, `make migrate-fresh` is the safest choice for development, but do not use it in production.
 
-## API Documentation
+## API Documentation 📚
 
 Swagger documentation is mounted under `/api/docs/*` after the application starts.
 
@@ -221,7 +221,7 @@ To regenerate the documentation assets, run:
 make docs
 ```
 
-## Database Layer
+## Database Layer 🗄️
 
 The database layer is based on SQLC and PostgreSQL migrations:
 
@@ -231,7 +231,7 @@ The database layer is based on SQLC and PostgreSQL migrations:
 
 This keeps query access strongly typed while keeping the SQL itself easy to review.
 
-## Authentication
+## Authentication 🔐
 
 Authentication is based on JWT access and refresh tokens.
 
@@ -239,11 +239,11 @@ Authentication is based on JWT access and refresh tokens.
 - Protected routes require an `Authorization` header.
 - The middleware accepts both raw tokens and `Bearer <token>` format, but bearer format is recommended.
 
-## Scheduler
+## Scheduler ⏱️
 
 The scheduler starts automatically with the API server. It currently runs a sample job every minute and logs the current users count using the configured application time zone. This is a placeholder for real recurring jobs and can be extended inside `internal/scheduler`.
 
-## Extending the Boilerplate
+## Extending the Boilerplate 🧩
 
 To add a new feature module:
 
@@ -253,7 +253,7 @@ To add a new feature module:
 4. Add or update SQL queries in `db/sql` if the module needs database access.
 5. Run `make sqlc` if the query layer changes.
 
-## Production Build
+## Production Build 🚢
 
 Build the application binary with:
 
@@ -263,7 +263,7 @@ make build
 
 The resulting executable is written to `./bin/letsgo`.
 
-## Notes
+## Notes 📝
 
 - The application expects PostgreSQL and Redis to be reachable from the configured host and port values.
 - Swagger metadata is populated from the runtime configuration, so keep `APP_HOST` aligned with the address you want to expose.

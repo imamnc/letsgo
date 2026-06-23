@@ -1,5 +1,7 @@
 # LetsGO
 
+![LetsGO Logo](letsgo.png)
+
 LetsGO is a Go API boilerplate built with Fiber, PostgreSQL, Redis, SQLC, JWT authentication, Swagger documentation, and a simple cron scheduler. It is designed to be a practical starting point for REST APIs that need a clean module structure, generated database access, and a ready-to-use development workflow.
 
 The project follows a module-based architecture under `internal/modules`, where each feature owns its own handler, service, repository, routes, and module wiring. Shared concerns such as configuration, JWT, Redis, response helpers, and middleware live in the `shared` and `internal` packages.

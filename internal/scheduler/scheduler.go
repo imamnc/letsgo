@@ -32,7 +32,8 @@ func SampleTask(application *app.Application) {
 		return
 	}
 	// Log the users count with a timestamp
-	timeStamp := time.Now().Format("2006-01-02 15:04:05")
+	timezone, _ := time.LoadLocation(application.Config.AppTimezone)
+	timeStamp := time.Now().In(timezone).Format("2006-01-02 15:04:05")
 	println(fmt.Sprintf("[%s] Scheduler running...", timeStamp))
 	println(fmt.Sprintf("[%s] Users count: %d", timeStamp, count))
 }

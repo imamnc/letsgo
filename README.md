@@ -1,6 +1,20 @@
-# LetsGO
+<p align="center">
+  <img src="letsgo.png" alt="LetsGO Logo" width="220" />
+</p>
 
-![LetsGO Logo](letsgo.png)
+<h1 align="center">LetsGO</h1>
+
+<p align="center">
+  <strong>Go API Boilerplate</strong> · Modular, production-ready, and built with Fiber, PostgreSQL, Redis, SQLC, JWT, and Swagger.
+</p>
+
+<p align="center">
+  <a href="#highlights-✨">Highlights</a> ·
+  <a href="#project-structure-📁">Structure</a> ·
+  <a href="#makefile-commands-and-usage-🛠️">Makefile</a>
+</p>
+
+---
 
 LetsGO is a Go API boilerplate built with Fiber, PostgreSQL, Redis, SQLC, JWT authentication, Swagger documentation, and a simple cron scheduler. It is designed to be a practical starting point for REST APIs that need a clean module structure, generated database access, and a ready-to-use development workflow.
 

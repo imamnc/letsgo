@@ -2,16 +2,16 @@
   <img src="letsgo.png" alt="LetsGO Logo" width="220" />
 </p>
 
-<h1 align="center">LetsGO</h1>
+<!-- <h1 align="center">LetsGO</h1> -->
 
 <p align="center">
   <strong>Go API Boilerplate</strong> · Modular, production-ready, and built with Fiber, PostgreSQL, Redis, SQLC, JWT, and Swagger.
 </p>
 
 <p align="center">
-  <a href="#highlights-✨">Highlights</a> ·
-  <a href="#project-structure-📁">Structure</a> ·
-  <a href="#makefile-commands-and-usage-🛠️">Makefile</a>
+  <a href="#highlights">Highlights</a> ·
+  <a href="#project-structure">Structure</a> ·
+  <a href="#makefile-commands-and-usage">Commands</a>
 </p>
 
 ---
@@ -20,13 +20,14 @@ LetsGO is a Go API boilerplate built with Fiber, PostgreSQL, Redis, SQLC, JWT au
 
 The project follows a module-based architecture under `internal/modules`, where each feature owns its own handler, service, repository, routes, and module wiring. Shared concerns such as configuration, JWT, Redis, response helpers, and middleware live in the `shared` and `internal` packages.
 
-## Highlights ✨
+<h2 id="highlights">Highlights ✨</h2>
 
 - Fiber-based HTTP API with versioned routing under `/api/v1`
 - SQLC-generated database access layer for strongly typed PostgreSQL queries
 - JWT-based authentication with protected routes and bearer token middleware
 - Redis service wrapper for caching and distributed coordination
 - Swagger UI and OpenAPI docs generated from annotations
+- Built-in health, auth, user, and permission modules with route scaffolding
 - Database migrations and seed commands ready for local development
 - Cron scheduler bootstrap for recurring jobs
 
@@ -40,7 +41,7 @@ The project follows a module-based architecture under `internal/modules`, where 
 - Swagger / Swaggo
 - `robfig/cron` for background jobs
 
-## Project Structure 📁
+<h2 id="project-structure">Project Structure 📁</h2>
 
 ```text
 cmd/
@@ -77,48 +78,6 @@ Each feature module is organized around the same structure:
 - `module.go` wires the dependencies together.
 
 The application is assembled in `cmd/api/main.go` by creating the app, registering routes, starting the scheduler, and then running the Fiber server.
-
-## Built-in Modules 🧩
-
-### Health
-
-Provides a lightweight service check endpoint.
-
-- `GET /api/v1/health`
-
-### Auth
-
-Handles token issuance, refresh flows, and current-user lookup.
-
-- `POST /api/v1/auth/access-token`
-- `POST /api/v1/auth/refresh-token`
-- `GET /api/v1/auth/user`
-
-The `GET /api/v1/auth/user` endpoint requires an `Authorization` header with a bearer access token.
-
-### Users
-
-Provides user CRUD operations and permission assignment endpoints.
-
-- `GET /api/v1/users`
-- `POST /api/v1/users`
-- `GET /api/v1/users/:id`
-- `PUT /api/v1/users/:id`
-- `DELETE /api/v1/users/:id`
-- `GET /api/v1/users/:id/permissions`
-- `POST /api/v1/users/:id/permissions`
-- `DELETE /api/v1/users/:id/permissions`
-- `PUT /api/v1/users/:id/permissions`
-
-### Permissions
-
-Provides permission CRUD operations.
-
-- `GET /api/v1/permissions`
-- `POST /api/v1/permissions`
-- `GET /api/v1/permissions/:id`
-- `PUT /api/v1/permissions/:id`
-- `DELETE /api/v1/permissions/:id`
 
 ## API Documentation 📚
 
@@ -189,7 +148,7 @@ make seed
 make dev
 ```
 
-## Makefile Commands and Usage 🛠️
+<h2 id="makefile-commands-and-usage">Makefile Commands and Usage 🛠️</h2>
 
 The repository exposes the following `make` commands as the primary workflow for development and maintenance.
 

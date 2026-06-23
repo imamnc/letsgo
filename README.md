@@ -104,6 +104,16 @@ Provides permission CRUD operations.
 - `PUT /api/v1/permissions/:id`
 - `DELETE /api/v1/permissions/:id`
 
+## API Documentation 📚
+
+Swagger documentation is mounted under `/api/docs/*` after the application starts.
+
+To regenerate the documentation assets, run:
+
+```bash
+make docs
+```
+
 ## Configuration ⚙️
 
 Copy `.env.example` to `.env` and adjust the values for your local environment.
@@ -210,16 +220,6 @@ The repository exposes the following `make` commands as the primary workflow for
 - Apply migrations with `make migrate` before running the server, then seed data with `make seed` if needed.
 - For database schema changes, create a migration, then run `make migrate` and `make sqlc` if the query layer is affected.
 - If you need to reset local state, `make migrate-fresh` is the safest choice for development, but do not use it in production.
-
-## API Documentation 📚
-
-Swagger documentation is mounted under `/api/docs/*` after the application starts.
-
-To regenerate the documentation assets, run:
-
-```bash
-make docs
-```
 
 ## Database Layer 🗄️
 

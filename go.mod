@@ -7,6 +7,7 @@ require github.com/golang-jwt/jwt/v5 v5.3.1
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/lib/pq v1.11.0 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 )
 

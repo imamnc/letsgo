@@ -5,7 +5,7 @@
 <!-- <h1 align="center">LetsGO</h1> -->
 
 <p align="center">
-  <strong>Go API Boilerplate</strong> · Modular, production-ready, and built with Fiber, PostgreSQL, Redis, SQLC, JWT, and Swagger.
+  <strong>LetsGO API</strong> · Modular, Fast, and Production-Ready. Built using Fiber Framework. 
 </p>
 
 <p align="center">

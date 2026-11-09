@@ -6,6 +6,7 @@ import (
 	"time"
 
 	dbsql "letsgo/db/sqlc"
+	"letsgo/shared/format"
 	sharedjwt "letsgo/shared/jwt"
 	response "letsgo/shared/response"
 
@@ -22,7 +23,8 @@ type ErrorResponse struct {
 }
 
 type FetchUserResponse struct {
-	User UserResponse `json:"user"`
+	User        UserResponse         `json:"user"`
+	Permissions []PermissionResponse `json:"permissions"`
 }
 
 type AccessTokenRequest struct {
@@ -41,6 +43,14 @@ type UserResponse struct {
 	Role      string    `json:"role"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type PermissionResponse struct {
+	ID          int32   `json:"id"`
+	ParentID    *int32  `json:"parent_id,omitempty"`
+	Name        string  `json:"name"`
+	Code        string  `json:"code"`
+	Description *string `json:"description,omitempty"`
 }
 
 type TokenResponse struct {
@@ -144,8 +154,26 @@ func (h *Handler) FetchUser(c *fiber.Ctx) error {
 	if err != nil {
 		return h.Error(c, err)
 	}
+	permissions, err := h.service.GetUserPermissions(c.Context(), claims.UserID)
+	if err != nil {
+		return h.Error(c, err)
+	}
 
-	return response.Success(c, "User fetched successfully", User(user))
+	permissionResponses := make([]PermissionResponse, len(permissions))
+	for i, permission := range permissions {
+		permissionResponses[i] = PermissionResponse{
+			ID:          permission.ID,
+			ParentID:    format.FromNullInt32(permission.ParentID),
+			Name:        permission.Name,
+			Code:        permission.Code,
+			Description: format.FromNullString(permission.Description),
+		}
+	}
+
+	return response.Success(c, "User fetched successfully", FetchUserResponse{
+		User:        User(user),
+		Permissions: permissionResponses,
+	})
 }
 
 func (h *Handler) Error(c *fiber.Ctx, err error) error {

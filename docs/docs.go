@@ -1087,8 +1087,34 @@ const docTemplate = `{
         "auth.FetchUserResponse": {
             "type": "object",
             "properties": {
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/auth.PermissionResponse"
+                    }
+                },
                 "user": {
                     "$ref": "#/definitions/auth.UserResponse"
+                }
+            }
+        },
+        "auth.PermissionResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "integer"
                 }
             }
         },

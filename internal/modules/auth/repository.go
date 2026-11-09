@@ -34,3 +34,7 @@ func (r *Repository) FindUserByID(ctx context.Context, id int64) (dbsql.User, er
 	}
 	return user, err
 }
+
+func (r *Repository) GetUserPermissions(ctx context.Context, userID int64) ([]dbsql.Permission, error) {
+	return r.app.Queries.GetUserPermissions(ctx, int32(userID))
+}

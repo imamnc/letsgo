@@ -15,8 +15,25 @@ definitions:
     type: object
   auth.FetchUserResponse:
     properties:
+      permissions:
+        items:
+          $ref: '#/definitions/auth.PermissionResponse'
+        type: array
       user:
         $ref: '#/definitions/auth.UserResponse'
+    type: object
+  auth.PermissionResponse:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parent_id:
+        type: integer
     type: object
   auth.RefreshTokenRequest:
     properties:

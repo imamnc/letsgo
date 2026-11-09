@@ -1149,6 +1149,9 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "gender": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },

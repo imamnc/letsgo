@@ -23,4 +23,9 @@ func main() {
 	if err := seeds.SeedUser(context.Background(), queries); err != nil {
 		log.Fatal(err)
 	}
+
+	// Assign every permission to every user
+	if err := seeds.SeedUserPermissions(context.Background(), queries); err != nil {
+		log.Fatal(err)
+	}
 }

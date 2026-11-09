@@ -82,6 +82,19 @@ func (q *Queries) GetUserPermissions(ctx context.Context, userID int32) ([]Permi
 	return items, nil
 }
 
+const seedAllUserPermissions = `-- name: SeedAllUserPermissions :exec
+INSERT INTO user_permissions (user_id, permission_id)
+SELECT users.id, permissions.id
+FROM users
+CROSS JOIN permissions
+ON CONFLICT (user_id, permission_id) DO NOTHING
+`
+
+func (q *Queries) SeedAllUserPermissions(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, seedAllUserPermissions)
+	return err
+}
+
 const syncUserPermissions = `-- name: SyncUserPermissions :exec
 WITH desired AS (
   SELECT unnest($2::int[]) AS permission_id

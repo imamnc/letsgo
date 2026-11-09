@@ -3,6 +3,13 @@ INSERT INTO user_permissions (user_id, permission_id)
 SELECT $1, unnest($2::int[])
 ON CONFLICT DO NOTHING;
 
+-- name: SeedAllUserPermissions :exec
+INSERT INTO user_permissions (user_id, permission_id)
+SELECT users.id, permissions.id
+FROM users
+CROSS JOIN permissions
+ON CONFLICT (user_id, permission_id) DO NOTHING;
+
 -- name: DetachUserPermissions :exec
 DELETE FROM user_permissions
 WHERE user_id = $1

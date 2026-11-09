@@ -1,20 +1,20 @@
 -- name: CreateUser :one
-INSERT INTO users (name, email, password)
-VALUES ($1, $2, $3)
-RETURNING id, name, email, password, created_at, updated_at;
+INSERT INTO users (name, email, password, gender)
+VALUES ($1, $2, $3, $4)
+RETURNING id, name, gender, email, password, created_at, updated_at;
 
 -- name: GetUserByID :one
-SELECT id, name, email, password, created_at, updated_at
+SELECT id, name, gender, email, password, created_at, updated_at
 FROM users
 WHERE id = $1;
 
 -- name: GetUserByEmail :one
-SELECT id, name, email, password, created_at, updated_at
+SELECT id, name, gender, email, password, created_at, updated_at
 FROM users
 WHERE email = $1;
 
 -- name: ListUsers :many
-SELECT id, name, email, password, created_at, updated_at
+SELECT id, name, gender, email, password, created_at, updated_at
 FROM users
 ORDER BY id
 LIMIT $1
@@ -30,7 +30,7 @@ SET name = $2,
     password = $4,
     updated_at = now()
 WHERE id = $1
-RETURNING id, name, email, password, created_at, updated_at;
+RETURNING id, name, gender, email, password, created_at, updated_at;
 
 -- name: DeleteUser :exec
 DELETE FROM users

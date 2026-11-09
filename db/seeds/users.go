@@ -12,6 +12,7 @@ import (
 
 type SeedUserParams struct {
 	Name     string
+	Gender   string
 	Email    string
 	Password string
 }
@@ -24,13 +25,15 @@ func PrepareUsers() []SeedUserParams {
 
 	return []SeedUserParams{
 		{
-			Name:     "Imam Nc",
-			Email:    "imamnc@mail.com",
+			Name:     "John Doe",
+			Gender:   "Male",
+			Email:    "johndoe@mail.com",
 			Password: string(password),
 		},
 		{
-			Name:     "John Doe",
-			Email:    "johndoe@mail.com",
+			Name:     "Lusy Ariana",
+			Gender:   "Female",
+			Email:    "lusy.ariana@mail.com",
 			Password: string(password),
 		},
 	}
@@ -44,6 +47,7 @@ func SeedUser(ctx context.Context, queries *dbsql.Queries) error {
 			Name:     user.Name,
 			Email:    user.Email,
 			Password: user.Password,
+			Gender:   user.Gender,
 		})
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {

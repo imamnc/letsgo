@@ -39,6 +39,7 @@ type RefreshTokenRequest struct {
 type UserResponse struct {
 	ID        int32     `json:"id"`
 	Name      string    `json:"name"`
+	Gender    string    `json:"gender"`
 	Email     string    `json:"email"`
 	Role      string    `json:"role"`
 	CreatedAt time.Time `json:"created_at"`
@@ -193,6 +194,7 @@ func User(user dbsql.User) UserResponse {
 	return UserResponse{
 		ID:        user.ID,
 		Name:      user.Name,
+		Gender:    user.Gender,
 		Email:     user.Email,
 		Role:      defaultUserRole,
 		CreatedAt: user.CreatedAt,

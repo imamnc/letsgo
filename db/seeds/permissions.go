@@ -9,6 +9,10 @@ import (
 	"letsgo/shared/format"
 )
 
+func ptr(s string) *string {
+	return &s
+}
+
 type SeedPermissionParams struct {
 	Name        string
 	Code        string
@@ -17,26 +21,23 @@ type SeedPermissionParams struct {
 }
 
 func PreparePermissions() []SeedPermissionParams {
-	readOnly := "Read-only permission"
-	execute := "Execute permission"
-
 	return []SeedPermissionParams{
 		{
-			Name:        "Read Permission",
-			Code:        "permission.read",
-			Description: &readOnly,
+			Name:        "(Finance) Manage Mutation",
+			Code:        "finance.mutation",
+			Description: ptr("Read-only permission"),
 			ParentID:    nil,
 		},
 		{
-			Name:        "Write Permission",
-			Code:        "permission.write",
-			Description: nil,
+			Name:        "(Finance) Manage Mutation Category",
+			Code:        "finance.category",
+			Description: ptr("Manage Mutation Category"),
 			ParentID:    nil,
 		},
 		{
-			Name:        "Execute Permission",
-			Code:        "permission.execute",
-			Description: &execute,
+			Name:        "Date & Time",
+			Code:        "datetime",
+			Description: ptr("Access Date & Time functionality"),
 			ParentID:    nil,
 		},
 	}

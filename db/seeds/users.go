@@ -24,8 +24,13 @@ func PrepareUsers() []SeedUserParams {
 
 	return []SeedUserParams{
 		{
-			Name:     "Administrator",
-			Email:    "admin@mail.com",
+			Name:     "Imam Nc",
+			Email:    "imamnc@mail.com",
+			Password: string(password),
+		},
+		{
+			Name:     "John Doe",
+			Email:    "johndoe@mail.com",
 			Password: string(password),
 		},
 	}
